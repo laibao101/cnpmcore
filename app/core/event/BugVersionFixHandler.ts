@@ -1,9 +1,10 @@
 import { Event, Inject } from '@eggjs/tegg';
 import { EggLogger } from 'egg';
 import { PACKAGE_VERSION_ADDED } from './index';
-import { BUG_VERSIONS } from '../../common/constants';
+import { BUG_VERSIONS, BUG_VERSIONS_SCOPE } from '../../common/constants';
 import { PackageManagerService } from '../service/PackageManagerService';
 import { BugVersionService } from '../service/BugVersionService';
+import { getScopeAndName } from '../../common/PackageUtil';
 
 @Event(PACKAGE_VERSION_ADDED)
 export class BugVersionFixHandler {
@@ -15,8 +16,9 @@ export class BugVersionFixHandler {
   @Inject()
   private readonly logger: EggLogger;
 
-  async handle(fullname: string) {
-    if (fullname !== BUG_VERSIONS) return;
+  async handle(packageFullName: string) {
+    const [ scope, packageName ] = getScopeAndName(packageFullName);
+    if (packageName !== BUG_VERSIONS || scope !== BUG_VERSIONS_SCOPE) return;
     try {
       const bugVersion = await this.packageManagerService.getBugVersion();
       if (!bugVersion) return;

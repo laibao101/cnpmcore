@@ -11,7 +11,7 @@ import semver from 'semver';
 import { calculateIntegrity, detectInstallScript, formatTarball, getFullname, getScopeAndName } from '../../common/PackageUtil';
 import { AbstractService } from '../../common/AbstractService';
 import { BugVersionStore } from '../../common/adapter/BugVersionStore';
-import { BUG_VERSIONS, LATEST_TAG } from '../../common/constants';
+import { BUG_VERSIONS, BUG_VERSIONS_SCOPE, LATEST_TAG } from '../../common/constants';
 import { PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
@@ -583,7 +583,7 @@ export class PackageManagerService extends AbstractService {
 
   async getBugVersion(): Promise<BugVersion | undefined> {
     // TODO performance problem, cache bugVersion and update with schedule
-    const pkg = await this.packageRepository.findPackage('', BUG_VERSIONS);
+    const pkg = await this.packageRepository.findPackage(BUG_VERSIONS_SCOPE, BUG_VERSIONS);
     if (!pkg) return;
     const tag = await this.packageRepository.findPackageTag(pkg!.packageId, LATEST_TAG);
     if (!tag) return;
